@@ -1,0 +1,11 @@
+{
+"Name": "Birthday",
+"Author": "boxosoup",
+"Description": "Add a birthday",
+"Version": "0.0.1",
+"UniqueID": "boxosoup.birthday",
+"EntryDll": "Birthday.dll",
+"MinimumApiVersion": "4.1.0",
+"UpdateKeys": [],
+"Dependencies": []
+}
