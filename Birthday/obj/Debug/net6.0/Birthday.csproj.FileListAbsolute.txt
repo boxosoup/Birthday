@@ -1,0 +1,8 @@
+/Users/allisons/RiderProjects/Birthday/Birthday/bin/Debug/net6.0/Birthday.deps.json
+/Users/allisons/RiderProjects/Birthday/Birthday/bin/Debug/net6.0/Birthday.dll
+/Users/allisons/RiderProjects/Birthday/Birthday/obj/Debug/net6.0/Birthday.csproj.AssemblyReference.cache
+/Users/allisons/RiderProjects/Birthday/Birthday/obj/Debug/net6.0/Birthday.GeneratedMSBuildEditorConfig.editorconfig
+/Users/allisons/RiderProjects/Birthday/Birthday/obj/Debug/net6.0/Birthday.AssemblyInfoInputs.cache
+/Users/allisons/RiderProjects/Birthday/Birthday/obj/Debug/net6.0/Birthday.AssemblyInfo.cs
+/Users/allisons/RiderProjects/Birthday/Birthday/obj/Debug/net6.0/Birthday.csproj.CoreCompileInputs.cache
+/Users/allisons/RiderProjects/Birthday/Birthday/obj/Debug/net6.0/Birthday.dll
