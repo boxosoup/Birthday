@@ -18,11 +18,15 @@ namespace Birthday;
 public class BirthdaySaveData
 {
 
-    public static void Register(string date)
+    public static void delegateRegister()
     {
         //date format is <season> <day>
-        Game1.player.modData[$"{ModEntry.UniqueID}/birthdaydate"] = date;
         GameStateQuery.Register(GSQ_IS_BIRTHDAY, IS_BIRTHDAY);
+    }
+
+    public static void Register(string date)
+    {
+        Game1.player.modData[$"{ModEntry.UniqueID}/birthdaydate"] = date;
     }
 
     private static readonly string GSQ_IS_BIRTHDAY = $"{ModEntry.UniqueID}_IS_BIRTHDAY";
@@ -30,18 +34,18 @@ public class BirthdaySaveData
 
     private static bool IS_BIRTHDAY(string[] query, GameStateQueryContext context)
     {
-        if (!context.TargetItem.modData.TryGetValue(ModData_BirthdayDate, out string date))
+        if (!context.Player.modData.TryGetValue(ModData_BirthdayDate, out string date))
         {
             return false;
         }
         string birthdaydata = Game1.player.modData[$"{ModEntry.UniqueID}/birthdaydate"];
-        int dayofbirthday = int.Parse(birthdaydata.Substring(birthdaydata.Length - 2));
-        if (dayofbirthday == Game1.dayOfMonth) ;
+        string dayPart = new string(birthdaydata.SkipWhile(char.IsLetter).ToArray());
+        int dayofbirthday = int.Parse(dayPart);
+        if (dayofbirthday == Game1.dayOfMonth && birthdaydata.Contains(Game1.currentSeason))
         {
-            if (birthdaydata.Contains(Game1.currentSeason)) ;
-            {
-                return true;
-            }
+            return true;
         }
+
+        return false;
     }
 }

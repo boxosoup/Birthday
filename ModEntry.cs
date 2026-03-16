@@ -18,27 +18,38 @@ namespace Birthday;
 public class ModEntry : Mod
 {
     public static string UniqueID = "boxosoup.birthday";
-    private ModConfig Config;
+    
+    internal static ModConfig config = null!;
+    internal static IModHelper help = null!;
     public override void Entry(IModHelper helper)
     {
-        // bind the event handler
+        
+        help = helper;
+        config = help.ReadConfig<ModConfig>();
         I18n.Init(helper.Translation);
         helper.Events.Input.ButtonPressed += OnButtonPressed;
         helper.Events.GameLoop.DayStarted += OnDayStarted;
-        
-        this.Config = this.Helper.ReadConfig<ModConfig>();
-        string exampleBool = this.Config.birthdaymonth;
+        helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+
+        BirthdaySaveData.delegateRegister();
     }
-    
+
+    private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
+    {
+        if (
+            Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu")
+            is IGenericModConfigMenuApi gmcm
+        )
+        {
+            config.Register(ModManifest, gmcm);
+        }
+    }
+
     void OnButtonPressed(object? sender, ButtonPressedEventArgs ev)
     {
-        // Don't process button presses if player hasn't loaded a save,
-        // is in another menu, or isn't free. I'd recommended you ignore these cases too.
         if (!Context.IsWorldReady) return;
         if (activeClickableMenu != null || (!Context.IsPlayerFree)) return;
-        
-        // Display our UI if user presses F10
-        if (ev.Button == SButton.W)
+        if (ev.Button == ModConfig.BirthdayMenuKey)
             activeClickableMenu = new BirthdayUi();
     }
     
@@ -46,28 +57,22 @@ public class ModEntry : Mod
     {
         if (activeClickableMenu != null || !Context.IsPlayerFree)
             return;
+        
+        this.Monitor.Log($"current season {Game1.currentSeason}, current day {Game1.dayOfMonth}", LogLevel.Debug);
 
-        if (!GameStateQuery.Exists($"{UniqueID}_IS_BIRTHDAY"))
+        if (!player.modData.TryGetValue($"{ModEntry.UniqueID}/birthdaydate", out string birthdaydata))
         {
             activeClickableMenu = new BirthdayUi();
         }
         else
         {
-            if (player.modData.TryGetValue($"{ModEntry.UniqueID}/birthdaydate", out string birthdaydata))
+            string dayPart = new string(birthdaydata.SkipWhile(char.IsLetter).ToArray());
+            int dayofbirthday = int.Parse(dayPart);
+            if (dayofbirthday == Game1.dayOfMonth && birthdaydata.Contains(Game1.currentSeason))
             {
-                int dayofbirthday = int.Parse(birthdaydata.Substring(birthdaydata.Length - 2));
-
-                if (birthdaydata.Contains(currentSeason) && dayOfMonth == dayofbirthday)
-                {
                     Game1.player.activeDialogueEvents.TryAdd($"{UniqueID}_birthday", 1);
                 }
-            }
+                return;
         }
-    }
-    
-    public sealed class ModConfig
-    {
-        public string birthdaymonth { get; set; }
-        public int birthdayday { get; set; }
     }
 }

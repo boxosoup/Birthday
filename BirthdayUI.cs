@@ -19,14 +19,14 @@ public class BirthdayUi : IClickableMenu
     private int XPos = (Game1.viewport.Width / 2) - (UIWidth / 2);
     private int YPos = (Game1.viewport.Height / 2) - (UIHeight / 2);
     private int Yoffset = -150;
+    private int Xoffset = -32;
     private readonly List<ClickableTextureComponent> SeasonButtons = new();
     private readonly List<ClickableTextureComponent> DayButtons = new();
     private ClickableTextureComponent okButton;
-    private Action<string, int> OnChanged;
 
 
     private ClickableComponent TitleLabel;
-    public BirthdayUi()
+    public BirthdayUi() : base((int)getAppropriateMenuPosition().X, (int)getAppropriateMenuPosition().Y, UIWidth , UIHeight)
     {
         base.initialize(XPos, YPos, UIWidth, UIHeight);
 
@@ -45,19 +45,19 @@ public class BirthdayUi : IClickableMenu
 
             SeasonButtons.Add(new ClickableTextureComponent("Spring",
                 new Rectangle(
-                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 1 - Game1.tileSize / 4,
+                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 1 - Game1.tileSize / 4 + Xoffset,
                     yPositionOnScreen + borderWidth + spaceToClearTopBorder + (int)(Game1.tileSize * 3.10) -
                     Game1.tileSize / 4 + Yoffset, Game1.tileSize * 2, Game1.tileSize), "", "", Game1.mouseCursors,
                 new Rectangle(188, 438, 32, 9), Game1.pixelZoom));
             SeasonButtons.Add(new ClickableTextureComponent("Summer",
                 new Rectangle(
-                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 3 - Game1.tileSize / 4,
+                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 3 - Game1.tileSize / 4 + Xoffset,
                     yPositionOnScreen + borderWidth + spaceToClearTopBorder + (int)(Game1.tileSize * 3.10) -
                     Game1.tileSize / 4 + Yoffset, Game1.tileSize * 2, Game1.tileSize), "", "", Game1.mouseCursors,
                 new Rectangle(220, 438, 32, 8), Game1.pixelZoom));
             SeasonButtons.Add(new ClickableTextureComponent("Fall",
                 new Rectangle(
-                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 5 - Game1.tileSize / 4,
+                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 5 - Game1.tileSize / 4 + Xoffset,
                     yPositionOnScreen + borderWidth + spaceToClearTopBorder + (int)(Game1.tileSize * 3.1) -
                     Game1.tileSize / 4 + Yoffset, Game1.tileSize * 2, Game1.tileSize), "", "", Game1.mouseCursors,
                 new Rectangle(188, 447, 32, 10), Game1.pixelZoom));
@@ -70,7 +70,7 @@ public class BirthdayUi : IClickableMenu
 
             DayButtons.Add(new ClickableTextureComponent("1",
                 new Rectangle(
-                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 1 - Game1.tileSize / 4,
+                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 1 - Game1.tileSize / 4 + Xoffset,
                     yPositionOnScreen + borderWidth + spaceToClearTopBorder + Game1.tileSize * 4 - Game1.tileSize / 4 +
                     Yoffset, Game1.tileSize * 1, Game1.tileSize), "", "",
                 Game1.content.Load<Texture2D>("LooseSprites\\font_bold"), new Rectangle(8, 16, 8, 12), Game1.pixelZoom)
@@ -723,9 +723,25 @@ public class BirthdayUi : IClickableMenu
 
         
     }
+    
+    public static Vector2 getAppropriateMenuPosition()
+    {
+        Vector2 defaultPosition = new Vector2(Game1.uiViewport.Width / 2 - UIWidth / 2, (Game1.uiViewport.Height / 2 - UIHeight / 2));
 
-    // 6. Render the UI that has been set up to the screen. 
-    // Gets called automatically every render tick when this UI is active
+        //Force the viewport into a position that it should fit into on the screen???
+        if (defaultPosition.X + UIWidth > Game1.uiViewport.Width)
+        {
+            defaultPosition.X = 0;
+        }
+
+        if (defaultPosition.Y + UIHeight > Game1.uiViewport.Height)
+        {
+            defaultPosition.Y = 0;
+        }
+        return defaultPosition;
+
+    }
+    
     public override void draw(SpriteBatch b)
     {
         
@@ -769,24 +785,24 @@ public class BirthdayUi : IClickableMenu
         switch (name)
         {
             case "Spring":
-                birthdayseason = "Spring";
+                birthdayseason = "spring";
                 break;
 
             case "Summer":
-                birthdayseason = "Summer";
+                birthdayseason = "summer";
                 break;
 
             case "Fall":
-                birthdayseason = "Fall";
+                birthdayseason = "fall";
                 break;
 
             case "Winter":
-                birthdayseason = "Winter";
+                birthdayseason = "winter";
                 break;
             
             case "OK":
 
-                BirthdaySaveData.Register($"{birthdayseason} {birthdayday}");
+                BirthdaySaveData.Register($"{birthdayseason}{birthdayday}");
                 if (Game1.CurrentEvent != null)
                 {
                     Game1.CurrentEvent.CurrentCommand++;
@@ -796,7 +812,7 @@ public class BirthdayUi : IClickableMenu
                 break;
 
             default:
-                birthdayday = Convert.ToInt32(name);
+                birthdayday = int.Parse(name);
                 break;
         }
         Game1.playSound("coin");
@@ -809,8 +825,13 @@ public class BirthdayUi : IClickableMenu
             if (button.containsPoint(x, y))
             {
                 HandleButtonClick(button.name);
-                button.scale -= 0.5f;
-                button.scale = Math.Max(3.5f, button.scale);
+
+                foreach (ClickableTextureComponent other in SeasonButtons)
+                {
+                    other.scale = Game1.pixelZoom;
+                }
+
+                button.scale = Game1.pixelZoom + 0.5f;
             }
         }
         foreach (ClickableTextureComponent button in DayButtons)
@@ -818,13 +839,24 @@ public class BirthdayUi : IClickableMenu
             if (button.containsPoint(x, y))
             {
                 HandleButtonClick(button.name);
-                button.scale -= 0.5f;
-                button.scale = Math.Max(3.5f, button.scale);
+                
+                foreach (ClickableTextureComponent other in DayButtons)
+                {
+                    other.scale = Game1.pixelZoom;
+                }
+                
+                foreach (ClickableTextureComponent other in DayButtons)
+                {
+                    if (other.name == button.name)
+                    {
+                        other.scale = Game1.pixelZoom + 0.5f;
+                    }
+                }
             }
         }
         if (this.okButton.containsPoint(x, y))
         {
-            if (birthdayseason == "" || birthdayday == 0) return;
+            if (string.IsNullOrEmpty(birthdayseason) || birthdayday == 0) return;
             HandleButtonClick(this.okButton.name);
             this.okButton.scale -= 0.25f;
             this.okButton.scale = Math.Max(0.75f, this.okButton.scale);
