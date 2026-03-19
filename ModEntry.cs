@@ -58,8 +58,6 @@ public class ModEntry : Mod
         if (activeClickableMenu != null || !Context.IsPlayerFree)
             return;
         
-        this.Monitor.Log($"current season {Game1.currentSeason}, current day {Game1.dayOfMonth}", LogLevel.Debug);
-
         if (!player.modData.TryGetValue($"{ModEntry.UniqueID}/birthdaydate", out string birthdaydata))
         {
             activeClickableMenu = new BirthdayUi();

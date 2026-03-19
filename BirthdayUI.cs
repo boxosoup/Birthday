@@ -63,17 +63,12 @@ public class BirthdayUi : IClickableMenu
                 new Rectangle(188, 447, 32, 10), Game1.pixelZoom));
             SeasonButtons.Add(new ClickableTextureComponent("Winter",
                 new Rectangle(
-                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 7 - Game1.tileSize / 4,
+                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 7 - Game1.tileSize / 4 + Xoffset,
                     yPositionOnScreen + borderWidth + spaceToClearTopBorder + (int)(Game1.tileSize * 3.1) -
                     Game1.tileSize / 4 + Yoffset, Game1.tileSize * 2, Game1.tileSize), "", "", Game1.mouseCursors,
                 new Rectangle(220, 448, 32, 8), Game1.pixelZoom));
 
-            DayButtons.Add(new ClickableTextureComponent("1",
-                new Rectangle(
-                    xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 1 - Game1.tileSize / 4 + Xoffset,
-                    yPositionOnScreen + borderWidth + spaceToClearTopBorder + Game1.tileSize * 4 - Game1.tileSize / 4 +
-                    Yoffset, Game1.tileSize * 1, Game1.tileSize), "", "",
-                Game1.content.Load<Texture2D>("LooseSprites\\font_bold"), new Rectangle(8, 16, 8, 12), Game1.pixelZoom)
+            this.DayButtons.Add(new ClickableTextureComponent("1", new Rectangle(this.xPositionOnScreen + spaceToClearSideBorder + borderWidth + Game1.tileSize * 1 - Game1.tileSize / 4, this.yPositionOnScreen + borderWidth + spaceToClearTopBorder + Game1.tileSize * 4 - Game1.tileSize / 4 + Yoffset, Game1.tileSize * 1, Game1.tileSize), "", "", Game1.content.Load<Texture2D>("LooseSprites\\font_bold"), new Rectangle(8, 16, 8, 12), Game1.pixelZoom)
             {
                 myID = 1,
                 downNeighborID = 8,
