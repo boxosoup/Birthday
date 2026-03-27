@@ -1,17 +1,15 @@
-using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
-using StardewValley;
 
 namespace Birthday;
 
 public sealed class ModConfig
 {
-    public static SButton BirthdayMenuKey { get; set; } = SButton.F7;
+    public static KeybindList BirthdayMenuKey { get; set; } = new(SButton.F7);
 
     private void Reset()
     {
-        BirthdayMenuKey = SButton.F7;
+        BirthdayMenuKey = new KeybindList(SButton.F7);
     }
 
     private void Save()
@@ -23,7 +21,7 @@ public sealed class ModConfig
     {
         gmcm.Register(mod, Reset, Save);
 
-        gmcm.AddKeybind(
+        gmcm.AddKeybindList(
             mod,
             () => BirthdayMenuKey,
             value => BirthdayMenuKey = value,

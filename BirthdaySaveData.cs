@@ -1,22 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using StardewModdingAPI;
 using StardewValley;
-using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
 using StardewValley.Delegates;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
 
 namespace Birthday;
 
 public class BirthdaySaveData
 {
+    private static readonly string GSQ_IS_BIRTHDAY = $"{ModEntry.UniqueID}_IS_BIRTHDAY";
+    private static readonly string ModData_BirthdayDate = $"{ModEntry.UniqueID}/birthdaydate";
 
     public static void delegateRegister()
     {
@@ -29,22 +19,13 @@ public class BirthdaySaveData
         Game1.player.modData[$"{ModEntry.UniqueID}/birthdaydate"] = date;
     }
 
-    private static readonly string GSQ_IS_BIRTHDAY = $"{ModEntry.UniqueID}_IS_BIRTHDAY";
-    private static readonly string ModData_BirthdayDate = $"{ModEntry.UniqueID}/birthdaydate";
-
     private static bool IS_BIRTHDAY(string[] query, GameStateQueryContext context)
     {
-        if (!context.Player.modData.TryGetValue(ModData_BirthdayDate, out string date))
-        {
-            return false;
-        }
-        string birthdaydata = Game1.player.modData[$"{ModEntry.UniqueID}/birthdaydate"];
-        string dayPart = new string(birthdaydata.SkipWhile(char.IsLetter).ToArray());
-        int dayofbirthday = int.Parse(dayPart);
-        if (dayofbirthday == Game1.dayOfMonth && birthdaydata.Contains(Game1.currentSeason))
-        {
-            return true;
-        }
+        if (!context.Player.modData.TryGetValue(ModData_BirthdayDate, out var date)) return false;
+        var birthdaydata = Game1.player.modData[$"{ModEntry.UniqueID}/birthdaydate"];
+        var dayPart = new string(birthdaydata.SkipWhile(char.IsLetter).ToArray());
+        var dayofbirthday = int.Parse(dayPart);
+        if (dayofbirthday == Game1.dayOfMonth && birthdaydata.Contains(Game1.currentSeason)) return true;
 
         return false;
     }
